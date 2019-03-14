@@ -1,0 +1,49 @@
+SIMULATION OF MOVING SOURCES
+
+This software is designed to simulate the recording of a moving source by one or more microphones in a reverberant room. 
+To compute the signal x recorded at the microphones defined by {sensor_xyz,sensor_off,sensor_type} when a source emits the signal s sampled at fs Hz while moving along the piecewise linear path defined by {ptime,source_xyz} in a room defined by {room_size,F_abs,A}, type
+
+[time,HH]=MBSS_roomsimove(fs,room_size,F_abs,A,sensor_xyz,sensor_off,sensor_type,ptime,source_xyz)
+x=MBSS_roomsimove_apply(time,HH,s,fs);
+
+Examples of room/microphone/source configurations and  are given in ../../examples/example_2/MBSS_audioScene_parameters.m for fixed sources.
+
+Moving room impulse responses are obtained by linear interpolation of static room impulse reponses computed at discrete points over the path. A theoretical justification of this approach along with some error bounds is given in MBSS_roomsimove.m.
+
+roomsimove 3.3 software version is available at http://www.loria.fr/~evincent/soft.html
+
+
+SIMULATION OF STATIC SOURCES
+
+The static room impulse reponses are computed by roomsimove_single.m, which is a stripped-down version of the Roomsim toolbox version 3.3 by Douglas R. Campbell previously available at http://media.paisley.ac.uk/~campbell/Roomsim/
+
+Differences since copyright 2008 (roomsimove.m and roomsimove_single.m renammed respectively MBSS_roomsimove.m and MBSS_roomsimove_single.m):
+- input parameters management(no usage of .txt file for parameters storage)
+
+Differences with Roomsim version 3.3:
+- three or more sensors allowed
+- faster implementation
+- distance and air attenuation applied to all image sources whatever their distance and modeled by a variable filter length (usually shorter)
+- no low-pass filter included in the fractional delay filters
+- no check of sensor/source positions (must be in the room and distant from at least 5 cm)
+- no check of simulation time or memory overflow
+
+Default parameters:
+humidity=40
+temperature=20 (corresponding to c=343m/s)
+order=-1 (default reflection order)
+H_length=-1 (default filter length)
+air_F=1 (air attenuation)
+dist_F=1 (distance attenuation)
+Fc_HP=20 (high-pass filter above 20Hz)
+smooth_F=1 (fractional delay filters)
+alpha_F=1 (surface opacity = reflectivity)
+
+
+LICENSE
+
+Copyright 2015 Ewen Camberlein and Romain Lebarbenchon for modifications of roomsimove.m and roomsimove_single.m (renammed respectively MBSS_roomsimove.m and MBSS_roomsimove_single.m)
+Copyright 2008 Emmanuel Vincent for all software
+Copyright 2003 Douglas R. Campbell for roomsimove_single.m only
+
+This software is distributed under the terms of the GNU Public License version 3 (http://www.gnu.org/licenses/gpl.txt)

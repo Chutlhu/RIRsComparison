@@ -1,0 +1,73 @@
+This software is designed to simulate the recording of one (possibly moving) source by one or more microphones in a reverberant room. For more information about a particular function, e.g., roomsimove_single, type
+
+help roomsimove_single
+
+
+VERSIONS
+1.0	10/03/2010	Initial release
+1.1	01/04/2010	Added RT60toA
+1.2	04/07/2010	Compute anechoic impulse responses
+1.3	29/06/2014	Updated the README
+1.4	08/12/2016	Account for source directivity
+
+
+SIMULATION OF MOVING SOURCES
+
+To compute the signal x recorded at the microphones defined in room_sensor_config.txt when the source signal stored in the mono WAV file source_signal.wav is emitted while moving along the piecewise linear path defined in source_config.txt, type
+
+[s,fs]=wavread('source_signal.wav');
+[time,HH]=roomsimove('room_sensor_config.txt','source_config.txt',fs);
+x=roomsimove_apply(time,HH,s,fs);
+
+Examples of room/microphone configurations and source paths are given in room_sensor_config.txt and source_config.txt respectively. The directivity of each microphone is stored in a .MAT file in a cell variable called S3D with 181 lines (elevation from -90 to +90°, with z=0 corresponding to 0°) and 361 columns (azimuth from -180 to +180°, with x>0 and y=0 corresponding to 0°).
+
+Moving room impulse responses are obtained by linear interpolation of static room impulse reponses computed at discrete points over the path. A theoretical justification of this approach along with some error bounds is given in roomsimove.m.
+
+
+SIMULATION OF STATIC SOURCES
+
+The static room impulse reponses are computed by roomsimove_single.m, which is a stripped-down version of the Roomsim toolbox version 3.3 by Douglas R. Campbell previously available at http://media.paisley.ac.uk/~campbell/Roomsim/
+
+To compute the signal x recorded at the microphones defined in room_sensor_config.txt when the source signal stored in the mono WAV file source_signal.wav is emitted at fixed position [x; y; z], type
+
+[s,fs]=wavread('source_signal.wav');
+H=roomsimove_single('room_sensor_config.txt',[x; y; z])
+x=fftfilt(H,s);
+
+Differences with Roomsim version 3.3:
+- three or more sensors allowed
+- faster implementation
+- distance and air attenuation applied to all image sources whatever their distance and modeled by a variable filter length (usually shorter)
+- no low-pass filter included in the fractional delay filters
+- no check of sensor/source positions (must be in the room and distant from at least 5 cm)
+- no check of simulation time or memory overflow
+
+Default parameters:
+humidity=40
+temperature=20 (corresponding to c=343m/s)
+order=-1 (default reflection order)
+H_length=-1 (default filter length)
+air_F=1 (air attenuation)
+dist_F=1 (distance attenuation)
+Fc_HP=20 (high-pass filter above 20Hz)
+smooth_F=1 (fractional delay filters)
+alpha_F=1 (surface opacity = reflectivity)
+
+
+MIXING SEVERAL SOUND SOURCES
+
+If you wish to mix several sources, then you need to repeat the above steps for each source and to sum the results, e.g., for a mixture of two sources:
+
+[s1,fs]=wavread('source_signal1.wav');
+[s2,fs]=wavread('source_signal2.wav');
+H1=roomsimove_single('room_sensor_config.txt',[x1; y1; z1])
+H2=roomsimove_single('room_sensor_config.txt',[x2; y2; z2])
+x=fftfilt(H1,s1)+fftfilt(H2,s2);
+
+
+LICENSE
+
+Copyright 2008 Emmanuel Vincent for all software
+Copyright 2003 Douglas R. Campbell for roomsimove_single.m only
+
+This software is distributed under the terms of the GNU Public License version 3 (http://www.gnu.org/licenses/gpl.txt)

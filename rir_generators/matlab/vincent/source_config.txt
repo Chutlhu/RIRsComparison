@@ -1,0 +1,13 @@
+%Time instants (in seconds) and corresponding source positions (in meters)
+ptime	0	2.5	5.1	10
+px	2.6	2.6	2.1	2.1
+py	0.7	0.7	0.7	0.7
+pz	1.6	1.6	1.6	1.6
+
+% Corresponding source orientations (azimuth, elevation and roll offset in degrees, positive for slew left, nose up or right wing down)
+pa	0	0	0	0
+pe	0	0	0	0
+pr	0	0	0	0
+
+% Source direction-dependent impulse responses (e.g. gains or artificial mouth impulse response)
+pd      'omnidirectional'
